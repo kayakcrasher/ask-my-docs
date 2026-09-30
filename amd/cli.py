@@ -34,6 +34,7 @@ USAGE = """[bold]ask-my-docs[/bold] — RAG from scratch
   [green]stats[/green]                    Show index size and sources
   [green]list[/green]                     List indexed sources
   [green]reset[/green]                    Delete the entire index
+  [green]eval[/green] [dim]\\[file][/dim]          Run evaluation on evals/qa.json
 
 [dim]Examples:[/dim]
   python -m amd ingest
@@ -122,12 +123,31 @@ def cmd_reset(args: list[str]) -> int:
     return 0
 
 
+def cmd_eval(args: list[str]) -> int:
+    from amd.eval import load_cases, run_eval, print_summary
+
+    path = args[0] if args else str(ROOT / "evals" / "qa.json")
+    try:
+        cases = load_cases(path)
+    except Exception as e:
+        console.print(f"[red]error:[/red] {e}")
+        return 1
+
+    console.print()
+    console.print(f"[bold]Running {len(cases)} eval case(s)[/bold]")
+    console.print()
+    summary = run_eval(cases, db_path=DEFAULT_DB)
+    print_summary(summary)
+    return 0 if summary.failed == 0 else 1
+
+
 COMMANDS = {
     "ingest": cmd_ingest,
     "ask": cmd_ask,
     "stats": cmd_stats,
     "list": cmd_list,
     "reset": cmd_reset,
+    "eval": cmd_eval,
     "help": lambda _: (console.print(USAGE), 0)[1],
 }
 

@@ -1,0 +1,32 @@
+{
+  "cases": [
+    {
+      "question": "What is this project about?",
+      "expected_contains": ["rag", "retrieval"],
+      "should_refuse": false
+    },
+    {
+      "question": "What does RAG stand for?",
+      "expected_contains": ["retrieval", "generation"],
+      "should_refuse": false
+    },
+    {
+      "question": "Why use SQLite instead of a vector database?",
+      "expected_contains": ["sqlite", "simple"],
+      "should_refuse": false
+    },
+    {
+      "question": "What Python libraries does this use?",
+      "expected_contains": ["python"],
+      "should_refuse": false
+    },
+    {
+      "question": "Who won the 2024 Super Bowl?",
+      "should_refuse": true
+    },
+    {
+      "question": "What is the capital of Peru?",
+      "should_refuse": true
+    }
+  ]
+}
