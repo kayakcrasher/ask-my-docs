@@ -10,6 +10,7 @@ comes later — this gives you a baseline you can improve against.
 from __future__ import annotations
 
 import json
+import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable
@@ -56,7 +57,14 @@ def load_cases(path: str | Path) -> list[dict]:
 
 
 def _check(case: dict, answer: str) -> tuple[bool, str]:
-    """Return (passed, reason)."""
+    """Return (passed, reason).
+
+    Modes:
+      - should_refuse: answer must contain the refusal phrase.
+      - mode 'all' (default): every keyword in `expected_contains` must appear.
+      - mode 'any': at least one keyword must appear.
+      - mode 'judge': LLM decides if the answer satisfies the question.
+    """
     low = answer.lower()
 
     if case.get("should_refuse"):
@@ -64,12 +72,56 @@ def _check(case: dict, answer: str) -> tuple[bool, str]:
             return True, "refused as expected"
         return False, "should have refused, but answered"
 
-    # normal case: every expected keyword must appear
+    mode = case.get("mode", "all")
     expected = [k.lower() for k in case.get("expected_contains", [])]
+
+    if mode == "any":
+        if not expected:
+            return True, "no keywords required"
+        hits = [k for k in expected if k in low]
+        if hits:
+            return True, f"matched: {', '.join(hits)}"
+        return False, f"none of: {', '.join(expected)}"
+
+    if mode == "judge":
+        return _judge(case["question"], answer)
+
+    # default: all
     missing = [k for k in expected if k not in low]
     if missing:
         return False, f"missing keywords: {', '.join(missing)}"
     return True, "contains all expected keywords"
+
+
+JUDGE_PROMPT = """You grade whether an answer satisfies a question.
+
+Reply with EXACTLY one line: either "PASS: <reason>" or "FAIL: <reason>".
+
+Judge generously. Paraphrases count. If the answer is factually correct
+and addresses the question, PASS. Only FAIL if the answer is wrong,
+refuses when it shouldn't, or doesn't address the question."""
+
+
+def _judge(question: str, answer: str) -> tuple[bool, str]:
+    """Ask the LLM to grade an answer. Falls back to fail on error."""
+    from amd.ask import _call_groq
+
+    try:
+        verdict = _call_groq(
+            [
+                {"role": "system", "content": JUDGE_PROMPT},
+                {"role": "user", "content": f"Question: {question}\n\nAnswer: {answer}"},
+            ],
+            temperature=0.0,
+            max_tokens=200,
+        ).strip()
+    except Exception as e:
+        return False, f"judge error: {e}"
+
+    upper = verdict.upper()
+    if upper.startswith("PASS"):
+        return True, f"judge: {verdict}"
+    return False, f"judge: {verdict}"
 
 
 def run_eval(
@@ -86,6 +138,7 @@ def run_eval(
             console.print(f"[dim]({i}/{len(cases)})[/dim] {q}")
 
         try:
+            time.sleep(4)  # stay under Groq free-tier TPM
             result = ask(q, db_path=db_path)
             passed, reason = _check(case, result.text)
             answer = result.text

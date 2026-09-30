@@ -16,8 +16,8 @@ from __future__ import annotations
 import re
 from typing import Iterable
 
-DEFAULT_TARGET = 800     # ~200 tokens — comfortable chunk size
-DEFAULT_MAX = 1600       # ~400 tokens — hard ceiling before we split
+DEFAULT_TARGET = 400     # ~200 tokens — comfortable chunk size
+DEFAULT_MAX = 800       # ~400 tokens — hard ceiling before we split
 DEFAULT_OVERLAP = 100    # ~25 tokens — context carried between chunks
 
 # Split on blank lines, optionally followed by a heading line.

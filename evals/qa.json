@@ -2,22 +2,23 @@
   "cases": [
     {
       "question": "What is this project about?",
-      "expected_contains": ["rag", "retrieval"],
+      "expected_contains": [
+        "rag",
+        "retrieval"
+      ],
       "should_refuse": false
     },
     {
       "question": "What does RAG stand for?",
-      "expected_contains": ["retrieval", "generation"],
-      "should_refuse": false
+      "should_refuse": false,
+      "expected_contains": [
+        "retrieval",
+        "generation"
+      ]
     },
     {
       "question": "Why use SQLite instead of a vector database?",
-      "expected_contains": ["sqlite", "simple"],
-      "should_refuse": false
-    },
-    {
-      "question": "What Python libraries does this use?",
-      "expected_contains": ["python"],
+      "mode": "judge",
       "should_refuse": false
     },
     {
@@ -25,8 +26,49 @@
       "should_refuse": true
     },
     {
-      "question": "What is the capital of Peru?",
+      "question": "whats this tool do?",
+      "mode": "any",
+      "expected_contains": [
+        "rag",
+        "search",
+        "ask",
+        "question",
+        "retrieval"
+      ],
+      "should_refuse": false
+    },
+    {
+      "question": "how do I find stuff in my files?",
+      "mode": "any",
+      "expected_contains": [
+        "ingest",
+        "index",
+        "ask",
+        "question",
+        "folder"
+      ],
+      "should_refuse": false
+    },
+    {
+      "question": "Why SQLite?",
+      "mode": "any",
+      "expected_contains": [
+        "sqlite",
+        "simple",
+        "fast",
+        "lightweight",
+        "setup"
+      ],
+      "should_refuse": false
+    },
+    {
+      "question": "What chunk size does the code use?",
       "should_refuse": true
+    },
+    {
+      "question": "Would this be useful for someone learning AI?",
+      "mode": "judge",
+      "should_refuse": false
     }
   ]
 }

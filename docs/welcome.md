@@ -1,8 +1,12 @@
 # Welcome to Ask My Docs
 
-Ask My Docs is a small RAG tool built in Python. It reads text files from a
-folder, splits them into chunks, embeds each chunk, stores the embeddings in
-SQLite, and lets you ask questions.
+Ask My Docs is a small RAG tool built in Python. RAG stands for
+**Retrieval-Augmented Generation** — a technique that combines a search step
+(retrieval) with a language model's generation step, so answers are grounded in
+your own documents instead of the model's training data.
+
+Ask My Docs reads text files from a folder, splits them into chunks, embeds
+each chunk, stores the embeddings in SQLite, and lets you ask questions.
 
 ## What it does
 
