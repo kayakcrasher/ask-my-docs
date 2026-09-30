@@ -16,12 +16,6 @@ grounded in your documents with citations back to the source.
 Every piece is written and explained. No LangChain. No external vector database.
 No framework hiding the work.
 
-## Why
-
-To understand how RAG actually works — not through a framework, but from the
-ground up. Chunking, embeddings, similarity search, prompting, and (soon)
-evaluation.
-
 ## Install
 
 ```bash
@@ -37,4 +31,19 @@ pip install httpx python-dotenv rich
 
 # On a laptop:
 pip install numpy httpx python-dotenv rich
+## Roadmap
 
+- [ ] Evaluation — measure retrieval and answer quality on a labeled set
+- [ ] Hybrid search — combine BM25 keyword search with vector search
+- [ ] Reranking — a second model re-scores the top-N before generation
+- [ ] Multi-format — PDF, HTML, DOCX loaders
+- [ ] Web UI — one-page HTML + FastAPI, ask in the browser
+
+## Status
+
+Working end to end. Answers are grounded, cited, and correct on the sample
+docs. Evaluated on a small hand-labeled set next.
+
+## License
+
+MIT
